@@ -1,0 +1,40 @@
+#!/bin/bash
+
+PROGRAMAS_PARA_INSTALAR=(
+gnome-todo
+todoist
+virt-manager
+calibre
+w3m
+lsb
+vim
+git-all
+code
+intel-media-driver
+google-chrome
+ttf-mscorefonts-installer
+telegram-desktop
+discord
+vlc
+libreoffice-langpack-pt-BR
+mesa-dri-drivers.i686 
+mesa-libGL.i686 
+xorg-x11-drv-intel
+microcode_ctl iucode-tool
+)
+
+for nome_do_programa in ${PROGRAMAS_PARA_INSTALAR[@]}; do
+	#if dnf list installed | grep "nome_do_programa" &>/dev/null; then
+	if dnf list installed | grep "nome_do_programa" 2 >> /tmp/liten.txt; then
+		echo "[INSTALADO] - $nome_do_programa" >> instalados.txt
+	else
+		dnf install "$nome_do_programa" -y 2>> nao_instalados.txt
+	fi
+done
+
+
+
+
+# dropbox
+# simplenote
+# epson

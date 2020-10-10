@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+
+# ----------------------------- VARIÁVEIS ----------------------------- #
+
+
+DIRETORIO_DOWNLOADS="$HOME/Tst"
+
+PROGRAMAS_PARA_INSTALAR=(
+  snapd
+  lsb
+  mint-meta-codecs
+  winff
+  nemo-dropbox
+  dropbox
+  ttf-mscorefonts-installer
+  plank
+  gparted
+  anydesk
+  vim
+  openssh-server
+  git-all
+  guvcview
+  keepassxc
+  goldenditc
+)
+# ---------------------------------------------------------------------- #
+
+# ----------------------------- REQUISITOS ----------------------------- #
+## Removendo travas eventuais do apt ##
+sudo apt install -f
+sudo rm /var/lib/dpkg/lock-frontend
+sudo rm /var/cache/apt/archives/lock
+sudo add-apt-repository ppa:phoerious/keepassxc
+
+# ---------------------------------------------------------------------- #
+
+# ----------------------------- EXECUÇÃO ----------------------------- #
+## Atualizando o repositório depois da adição de novos repositórios ##
+sudo apt update -y
+
+## Download e instalaçao de programas externos ##
+
+
+wget -ci wgts -P "$DIRETORIO_DOWNLOADS"
+
+
+## Extraindo e instalando pacotes .deb baixados na sessão anterior ##
+sudo dpkg -i $DIRETORIO_DOWNLOADS/*.deb
+# 1 - Libreoffice
+sudo apt remove libreoffice*
+tar -xzf "$DIRETORIO_DOWNLOADS"/LibreOffice_6.3.4_Linux_x86-64_deb.tar.gz -C "$DIRETORIO_DOWNLOADS"/
+sudo dpkg -i "$DIRETORIO_DOWNLOADS"/LibreOffice_6.3.4.2_Linux_x86-64_deb/DEBS/*.deb
+tar -xzf "$DIRETORIO_DOWNLOADS"/LibreOffice_6.3.4_Linux_x86-64_deb_langpack_pt-BR.tar.gz -C "$DIRETORIO_DOWNLOADS"/
+sudo dpkg -i "$DIRETORIO_DOWNLOADS"/LibreOffice_6.3.4.2_Linux_x86-64_deb_langpack_pt-BR/DEBS/*.deb
+# 2 - Epson
+tar -xzf "$DIRETORIO_DOWNLOADS"/imagescan-bundle-linuxmint*.tar.gz -C "$DIRETORIO_DOWNLOADS"/
+"$DIRETORIO_DOWNLOADS"/tmp/imagescan*.deb/./install.sh
+
+
+# Instalar programas no apt
+for nome_do_programa in ${PROGRAMAS_PARA_INSTALAR[@]}; do
+  if ! dpkg -l | grep -q $nome_do_programa | grep ii; then # Só instala se já não estiver instalado
+    apt install "$nome_do_programa" -y
+  else
+    echo "[INSTALADO] - $nome_do_programa"
+  fi
+done
+
+
+## Instalando pacotes Snap ##
+sudo snap install spotify
+
+
+# ----------------------------- PÓS-INSTALAÇÃO ----------------------------- #
+## Finalização, atualização e limpeza##
+sudo apt install -f
+sudo apt update && sudo apt dist-upgrade -y
+flatpak update
+sudo apt autoclean
+sudo apt autoremove -y
+# ----------------------------------------------------------------------- #

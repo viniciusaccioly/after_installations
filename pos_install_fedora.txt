@@ -1,0 +1,115 @@
+#/bin/bash
+
+#Comandos para verificar programas instalados no fedora/centOs
+#rpm -qa | grep programa
+#dnf list installed | grep "programa"
+
+# ----------------------------- VARIÁVEIS ----------------------------- #
+
+mkdir "$HOME/programasRPM"
+
+DIRETORIO_DOWNLOADS="$HOME/programasRPM"
+
+
+PROGRAMAS_PARA_INSTALAR=(
+	lsb
+  	vim
+	git-all
+	code
+	intel-media-driver
+	google-chrome
+	ttf-mscorefonts-installer
+	telegram-desktop
+	discord
+    vlc
+    libreoffice-langpack-pt-BR
+    mesa-dri-drivers.i686 
+    mesa-libGL.i686 
+    xorg-x11-drv-intel
+    microcode_ctl iucode-tool
+)
+
+
+# ------------------------- EXTERNOS --------------------------------- #
+
+#Programas_Downlads_Externos=(
+# dropbox
+# simplenote
+# epson
+#plank-0.11.4-99.fc31.x86_64)
+
+wget -ci wgts_fedora.txt -P $DIRETORIO_DOWNLOADS 
+
+
+#------------------------- Repositorio e chaves ------------------------- #
+
+rm /var/lib/rpm/.rpm.lock
+#dnf copr enable gqman69/plank -y
+dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+
+#dnf install -y https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+rpm --import https://packages.microsoft.com/keys/microsoft.asc
+dnf install -y fedora-workstation-repositories
+dnf config-manager -y --set-enabled fedora-cisco-openh264
+sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+
+#------------------------- Updates e Upgrades -------------------------------- #
+#dnf check-update -y
+#dnf check-upgrade -y
+#dnf update
+#dnf upgrade
+
+
+#----------------------------- Instalar Programas ---------------------------- #
+
+
+for nome_do_programa in ${PROGRAMAS_PARA_INSTALAR[@]}; do
+	if dnf list installed | grep "nome_do_programa" &>/dev/null; then
+		echo "[INSTALADO] - $nome_do_programa"
+	else
+		dnf install "$nome_do_programa" -y
+	fi
+done
+
+# --------------------- Iniciando os serviços ----------------------------- # 
+systemctl enable sshd
+systemctl start sshd
+
+#-------------------- Descompactando e Instalando Programas ---------------- #
+
+# Telegram
+#tar -Jxf $DIRETORIO_DOWNLOADS/tsetup.*.tar.xz -C $DIRETORIO_DOWNLOADS/
+#chmod +x $DIRETORIO_DOWNLOADS/Telegram/Telegram
+#$DIRETORIO_DOWNLOADS/Telegram/./Telegram
+# Epson
+tar -xzf "$DIRETORIO_DOWNLOADS"/imagescan-bundle-fedora-31-3.62.0.x64.rpm.tar.gz -C $DIRETORIO_DOWNLOADS/
+"$DIRETORIO_DOWNLOADS"/imagescan-bundle-fedora-31-3.62.0.x64.rpm/./install.sh
+
+dnf install "$DIRETORIO_DOWNLOADS"/*.rpm -y
+
+#--------------------- Configurando o Plank ------------------------------- #
+#echo "exclude=plank" >> /etc/dnf/dnf.conf
+
+#--------------------- Melhorando o desenpenho do DNF ------------------------ #
+#echo -e '#\nskip_if_unavailable=True\nfastestmirror=True\ndeltarpm=True' | tee -a /etc/dnf/dnf.conf
+
+# Desativando repositÃ³rios Modular para updates mais rÃ¡pidos
+#dnf config-manager --disable fedora-modular updates-modular
+
+# -------------------- PERSONLAIZAÇÃO -------------------------------------- #
+# Instalando fontes e temas de icones e terminal
+#dnf install -y abattis-cantarell-fonts adobe-source-sans-pro-fonts powerline powerline-fonts
+#wget -qO- https://git.io/papirus-icon-theme-install | sh
+#wget -qO- https://raw.githubusercontent.com/PapirusDevelopmentTeam/adapta-kde/master/install.sh | sh
+
+# Configurando o Powerline
+#echo -e '\n#Powerline\nif [ -f `which powerline-daemon` ]; then\n  powerline-daemon -q\n  POWERLINE_BASH_CONTINUATION=1\n  POWERLINE_BASH_SELECT=1\n  . /usr/share/powerline/bash/powerline.sh\nfi' | tee -a ~/.bashrc
+
+# Criando o swapfile e configurando a montagem no FSTAB
+#dd if=/dev/zero of=/mnt/swapfile bs=1024 count=3145728
+#chmod 600 /mnt/swapfile
+#mkswap /mnt/swapfile
+#echo -e '\n# SWAP\n/mnt/swapfile none swap sw 0 0' | tee -a /etc/fstab
+
+# Setando o uso do swap somente apos 90% da ram usada
+#echo -e '\n# To change the swappiness value to 10%\nvm.swappiness=10' | tee -a /usr/lib/sysctl.d/50-default.conf

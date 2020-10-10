@@ -1,0 +1,7 @@
+https://www.dropbox.com/download?dl=packages/fedora/nautilus-dropbox-2019.02.14-1.fedora.x86_64.rpm
+
+https://github.com/Automattic/simplenote-electron/releases/download/v1.14.0/Simplenote-linux-1.14.0-x86_64.rpm
+
+https://download3.ebz.epson.net/dsc/f/03/00/10/49/18/23a23cfb10e6bf12d278b31fef2ff736d0b0a5a4/epson-inkjet-printer-escpr-1.7.7-1lsb3.2.x86_64.rpm
+https://download3.ebz.epson.net/dsc/f/03/00/10/73/17/b7800e95ce43cbf94cfb69bdb5a4efebcf45d730/epson-printer-utility-1.1.1-1lsb3.2.x86_64.rpm
+https://download2.ebz.epson.net/imagescanv3/fedora/latest1/rpm/x64/imagescan-bundle-fedora-31-3.62.0.x64.rpm.tar.gz
